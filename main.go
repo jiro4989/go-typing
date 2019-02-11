@@ -71,7 +71,8 @@ func clock() {
 
 		termbox.Flush()
 
-		time.Sleep(1 * time.Millisecond)
+		// 秒間60frame
+		time.Sleep(1 * time.Second / 60)
 	}
 }
 
