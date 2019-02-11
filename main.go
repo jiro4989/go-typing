@@ -21,9 +21,10 @@ func main() {
 	}
 
 	for _, text := range texts {
+		var pos int
 		for {
-			setText(text)
-			if len(text) < 1 {
+			setText(text, pos)
+			if len(text) <= pos {
 				break
 			}
 			switch ev := termbox.PollEvent(); ev.Type {
@@ -33,10 +34,10 @@ func main() {
 					return
 				}
 				ch := ev.Ch
-				top := rune(text[0])
+				top := rune(text[pos])
 				same := ch == top
 				if same {
-					text = text[1:]
+					pos++
 				}
 			}
 		}
@@ -44,11 +45,15 @@ func main() {
 
 }
 
-func setText(text string) {
+func setText(text string, pos int) {
 	dc := termbox.ColorDefault
 	termbox.Clear(dc, dc)
 	for i, ch := range text {
-		termbox.SetCell(1+i, 1, ch, dc, dc)
+		c := dc
+		if i < pos {
+			c = termbox.ColorRed
+		}
+		termbox.SetCell(1+i, 1, ch, c, dc)
 	}
 	termbox.Flush()
 }
