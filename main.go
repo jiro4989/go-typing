@@ -1,7 +1,16 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
 	termbox "github.com/nsf/termbox-go"
+)
+
+var (
+	pos       int
+	text      string
+	startTime = time.Now()
 )
 
 func main() {
@@ -20,10 +29,12 @@ func main() {
 		"objectivec",
 	}
 
-	for _, text := range texts {
-		var pos int
+	go clock()
+
+	for _, v := range texts {
+		text = v
+		pos = 0
 		for {
-			setText(text, pos)
 			if len(text) <= pos {
 				break
 			}
@@ -42,18 +53,35 @@ func main() {
 			}
 		}
 	}
-
 }
 
-func setText(text string, pos int) {
+func clock() {
+	for {
+		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+
+		// タイピング対象のテキスト
+		setText(1, 1, text, pos)
+
+		// 経過時間
+		now := time.Now()
+		diff := now.Sub(startTime)
+		s := diff.Seconds()
+		t := fmt.Sprintf("%.6f", s)
+		setText(1, 3, t, 0)
+
+		termbox.Flush()
+
+		time.Sleep(1 * time.Millisecond)
+	}
+}
+
+func setText(x, y int, text string, pos int) {
 	dc := termbox.ColorDefault
-	termbox.Clear(dc, dc)
 	for i, ch := range text {
 		c := dc
 		if i < pos {
 			c = termbox.ColorRed
 		}
-		termbox.SetCell(1+i, 1, ch, c, dc)
+		termbox.SetCell(x+i, y, ch, c, dc)
 	}
-	termbox.Flush()
 }
