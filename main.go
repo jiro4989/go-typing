@@ -11,6 +11,7 @@ var (
 	pos       int
 	text      string
 	startTime = time.Now()
+	missCount int
 )
 
 func main() {
@@ -49,6 +50,8 @@ func main() {
 				same := ch == top
 				if same {
 					pos++
+				} else {
+					missCount++
 				}
 			}
 		}
@@ -68,6 +71,10 @@ func clock() {
 		s := diff.Seconds()
 		t := fmt.Sprintf("%.6f", s)
 		setText(1, 3, t, 0)
+
+		// 打ち間違いの数
+		mt := fmt.Sprintf("%d", missCount)
+		setText(1, 5, mt, 0)
 
 		termbox.Flush()
 
